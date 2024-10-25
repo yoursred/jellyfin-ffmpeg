@@ -236,7 +236,7 @@ prepare_extra_common() {
 
     # DAV1D
     pushd ${SOURCE_DIR}
-    git clone -b 1.4.3 --depth=1 https://code.videolan.org/videolan/dav1d.git
+    git clone -b 1.5.0 --depth=1 https://code.videolan.org/videolan/dav1d.git
     meson setup dav1d dav1d_build \
         ${MESON_CROSS_OPT} \
         --prefix=${TARGET_DIR} \
@@ -439,7 +439,7 @@ prepare_extra_amd64() {
     # VPL-GPU-RT (RT only)
     # Provides VPL runtime (libmfx-gen.so.1.2) for 11th Gen Tiger Lake and newer
     pushd ${SOURCE_DIR}
-    git clone -b intel-onevpl-24.4.0 --depth=1 https://github.com/intel/vpl-gpu-rt.git
+    git clone -b intel-onevpl-24.4.1 --depth=1 https://github.com/intel/vpl-gpu-rt.git
     pushd vpl-gpu-rt
     mkdir build && pushd build
     cmake -DCMAKE_INSTALL_PREFIX=${TARGET_DIR} \
@@ -459,7 +459,7 @@ prepare_extra_amd64() {
     # Full Feature Build: ENABLE_KERNELS=ON(Default) ENABLE_NONFREE_KERNELS=ON(Default)
     # Free Kernel Build: ENABLE_KERNELS=ON ENABLE_NONFREE_KERNELS=OFF
     pushd ${SOURCE_DIR}
-    git clone -b intel-media-24.4.0 --depth=1 https://github.com/intel/media-driver.git
+    git clone -b intel-media-24.4.1 --depth=1 https://github.com/intel/media-driver.git
     pushd media-driver
     # enable vc1 decode on dg2 (note that mtl+ is not supported)
     wget -q -O - https://github.com/intel/media-driver/commit/d5dd47b.patch | git apply

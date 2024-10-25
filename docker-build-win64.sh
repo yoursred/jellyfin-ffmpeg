@@ -473,7 +473,7 @@ popd
 popd
 
 # DAV1D
-git clone -b 1.4.3 --depth=1 https://code.videolan.org/videolan/dav1d.git
+git clone -b 1.5.0 --depth=1 https://code.videolan.org/videolan/dav1d.git
 meson setup dav1d dav1d_build \
     --prefix=${FF_DEPS_PREFIX} \
     --cross-file=${FF_MESON_TOOLCHAIN} \

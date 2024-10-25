@@ -1,3 +1,14 @@
+jellyfin-ffmpeg (7.0.2-5) unstable; urgency=medium
+
+  * Add bsf options to drop the DoVi and HDR10Plus metadata
+  * Validate DoVi config in muxers
+  * Fix 7.1 channel mapping and sample rate in AudioToolbox
+  * Sync RKMPP fixes from ffmpeg-rockchip
+  * Remove OpenGL compatability key in VideoToolbox for better perf
+  * Switch to upstream cuda scaler
+
+ -- nyanmisaka <nst799610810@gmail.com>  Fri, 25 Oct 2024 21:53:14 +0800
+
 jellyfin-ffmpeg (7.0.2-4) unstable; urgency=medium
 
   * Use more stable range and peak handling in tonemap filters
