@@ -253,20 +253,14 @@ prepare_extra_common() {
 
     # SVT-AV1
     pushd ${SOURCE_DIR}
-    git clone -b v2.2.1 --depth=1 https://gitlab.com/AOMediaCodec/SVT-AV1.git
+    git clone -b v2.3.0 --depth=1 https://gitlab.com/AOMediaCodec/SVT-AV1.git
     pushd SVT-AV1
     mkdir build
     pushd build
-    if [ "${ARCH}" = "amd64" ]; then
-        svtav1_avx512="-DENABLE_AVX512=ON"
-    else
-        svtav1_avx512="-DENABLE_AVX512=OFF"
-    fi
     cmake \
         ${CMAKE_TOOLCHAIN_OPT} \
         -DCMAKE_INSTALL_PREFIX=${TARGET_DIR} \
         -DCMAKE_BUILD_TYPE=Release \
-        $svtav1_avx512 \
         -DBUILD_SHARED_LIBS=ON \
         -DBUILD_{TESTING,APPS,DEC}=OFF \
         ..
@@ -382,7 +376,7 @@ prepare_extra_amd64() {
 
     # GMMLIB
     pushd ${SOURCE_DIR}
-    git clone -b intel-gmmlib-22.5.2 --depth=1 https://github.com/intel/gmmlib.git
+    git clone -b intel-gmmlib-22.5.3 --depth=1 https://github.com/intel/gmmlib.git
     pushd gmmlib
     mkdir build && pushd build
     cmake -DCMAKE_INSTALL_PREFIX=${TARGET_DIR} ..
@@ -439,7 +433,7 @@ prepare_extra_amd64() {
     # VPL-GPU-RT (RT only)
     # Provides VPL runtime (libmfx-gen.so.1.2) for 11th Gen Tiger Lake and newer
     pushd ${SOURCE_DIR}
-    git clone -b intel-onevpl-24.4.1 --depth=1 https://github.com/intel/vpl-gpu-rt.git
+    git clone -b intel-onevpl-24.4.2 --depth=1 https://github.com/intel/vpl-gpu-rt.git
     pushd vpl-gpu-rt
     mkdir build && pushd build
     cmake -DCMAKE_INSTALL_PREFIX=${TARGET_DIR} \
@@ -459,7 +453,7 @@ prepare_extra_amd64() {
     # Full Feature Build: ENABLE_KERNELS=ON(Default) ENABLE_NONFREE_KERNELS=ON(Default)
     # Free Kernel Build: ENABLE_KERNELS=ON ENABLE_NONFREE_KERNELS=OFF
     pushd ${SOURCE_DIR}
-    git clone -b intel-media-24.4.1 --depth=1 https://github.com/intel/media-driver.git
+    git clone -b intel-media-24.4.2 --depth=1 https://github.com/intel/media-driver.git
     pushd media-driver
     # enable vc1 decode on dg2 (note that mtl+ is not supported)
     wget -q -O - https://github.com/intel/media-driver/commit/d5dd47b.patch | git apply
