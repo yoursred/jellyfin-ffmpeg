@@ -1,3 +1,11 @@
+jellyfin-ffmpeg (7.0.2-6) unstable; urgency=medium
+
+  * Use dynamic pool for VPL QSV hwupload to save VRAM
+  * Fix artifacts caused by delayed release of MppPacket data
+  * Update dependencies
+
+ -- nyanmisaka <nst799610810@gmail.com>  Sun, 10 Nov 2024 22:03:57 +0800
+
 jellyfin-ffmpeg (7.0.2-5) unstable; urgency=medium
 
   * Add bsf options to drop the DoVi and HDR10Plus metadata
