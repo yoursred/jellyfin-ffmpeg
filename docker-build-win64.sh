@@ -384,7 +384,7 @@ pushd x264
     --host=${FF_TOOLCHAIN} \
     --cross-prefix=${FF_CROSS_PREFIX} \
     --disable-cli \
-    --enable-{static,lto,strip,pic}
+    --enable-{static,strip,pic}
 make -j$(nproc)
 make install
 popd
@@ -592,7 +592,6 @@ fi
     --disable-w32threads \
     --enable-pthreads \
     --enable-shared \
-    --enable-lto=auto \
     --enable-gpl \
     --enable-version3 \
     --enable-schannel \
