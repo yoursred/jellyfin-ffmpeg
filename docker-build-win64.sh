@@ -384,7 +384,7 @@ pushd x264
     --host=${FF_TOOLCHAIN} \
     --cross-prefix=${FF_CROSS_PREFIX} \
     --disable-cli \
-    --enable-{static,lto,strip,pic}
+    --enable-{static,strip,pic}
 make -j$(nproc)
 make install
 popd
@@ -456,7 +456,7 @@ popd
 popd
 
 # SVT-AV1
-git clone -b v2.2.1 --depth=1 https://gitlab.com/AOMediaCodec/SVT-AV1.git
+git clone -b v2.3.0 --depth=1 https://gitlab.com/AOMediaCodec/SVT-AV1.git
 pushd SVT-AV1
 mkdir build
 pushd build
@@ -464,7 +464,6 @@ cmake \
     -DCMAKE_TOOLCHAIN_FILE=${FF_CMAKE_TOOLCHAIN} \
     -DCMAKE_INSTALL_PREFIX=${FF_DEPS_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release \
-    -DENABLE_AVX512=ON \
     -DBUILD_{SHARED_LIBS,TESTING,APPS,DEC}=OFF \
     ..
 make -j$(nproc)
@@ -593,7 +592,6 @@ fi
     --disable-w32threads \
     --enable-pthreads \
     --enable-shared \
-    --enable-lto=auto \
     --enable-gpl \
     --enable-version3 \
     --enable-schannel \
