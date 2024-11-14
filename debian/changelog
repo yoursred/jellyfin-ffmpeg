@@ -1,3 +1,9 @@
+jellyfin-ffmpeg (7.0.2-7) unstable; urgency=medium
+
+  * Fix MppPacket being released before MppMeta
+
+ -- nyanmisaka <nst799610810@gmail.com>  Thu, 14 Nov 2024 14:58:41 +0800
+
 jellyfin-ffmpeg (7.0.2-6) unstable; urgency=medium
 
   * Use dynamic pool for VPL QSV hwupload to save VRAM
