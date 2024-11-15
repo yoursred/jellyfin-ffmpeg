@@ -78,3 +78,4 @@
 0078-fix-atenc-layout-samplerate.patch
 0079-videotoolbox-remove-opengl-compatability.patch
 0080-use-dynamic-pool-for-vpl-qsv-hwupload.patch
+0081-backport-av1-videotoolbox.patch
