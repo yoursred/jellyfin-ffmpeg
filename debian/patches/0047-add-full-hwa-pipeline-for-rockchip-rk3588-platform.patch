@@ -3168,7 +3168,7 @@ Index: FFmpeg/libavcodec/rkmppenc.h
 +        { "cabac", NULL, 0, AV_OPT_TYPE_CONST, { .i64 = 1 }, INT_MIN, INT_MAX, VE, .unit = "coder" },
 +    { "8x8dct", "Set the high profile 8x8 transform", OFFSET(dct8x8), AV_OPT_TYPE_BOOL,
 +            { .i64 = 1 }, 0, 1, VE, "8x8dct" },
-+    { NULL }
++    { NULL },
 +};
 +
 +static const AVOption hevc_options[] = {
@@ -3195,7 +3195,7 @@ Index: FFmpeg/libavcodec/rkmppenc.h
 +        { "6",          NULL, 0, AV_OPT_TYPE_CONST, { .i64 = 180 }, 0, 0, VE, .unit = "level" },
 +        { "6.1",        NULL, 0, AV_OPT_TYPE_CONST, { .i64 = 183 }, 0, 0, VE, .unit = "level" },
 +        { "6.2",        NULL, 0, AV_OPT_TYPE_CONST, { .i64 = 186 }, 0, 0, VE, .unit = "level" },
-+    { NULL }
++    { NULL },
 +};
 +
 +static const AVOption mjpeg_options[] = {
@@ -3205,7 +3205,7 @@ Index: FFmpeg/libavcodec/rkmppenc.h
 +            { .i64 = -1 }, -1, 99, VE, "qp_max" }, \
 +    { "qp_min", "Set the min QP/Q_Factor value", OFFSET(qp_min), AV_OPT_TYPE_INT, \
 +            { .i64 = -1 }, -1, 99, VE, "qp_min" }, \
-+    { NULL }
++    { NULL },
 +};
 +
 +static const enum AVPixelFormat rkmpp_enc_pix_fmts_h26x[] = {
@@ -5996,7 +5996,7 @@ Index: FFmpeg/libavutil/hwcontext_rkmpp.c
 +    uint32_t drm_format;
 +} supported_formats[] = {
 +    /* grayscale */
-+    { AV_PIX_FMT_GRAY8,     DRM_FORMAT_R8        },
++    { AV_PIX_FMT_GRAY8,     DRM_FORMAT_R8,       },
 +    /* fully-planar YUV */
 +    { AV_PIX_FMT_YUV420P,   DRM_FORMAT_YUV420,   },
 +    { AV_PIX_FMT_YUV422P,   DRM_FORMAT_YUV422,   },
@@ -6126,8 +6126,7 @@ Index: FFmpeg/libavutil/hwcontext_rkmpp.c
 +
 +    if (pix_fmt == AV_PIX_FMT_NV15 ||
 +        pix_fmt == AV_PIX_FMT_NV20) {
-+        const int log2_chroma_w = plane == 1 ? 1 : 0;
-+        const int width_align_256_odds = FFALIGN(width << log2_chroma_w, 256) | 256;
++        const int width_align_256_odds = FFALIGN(width, 256) | 256;
 +        return FFALIGN(width_align_256_odds * 10 / 8, 64);
 +    }
 +
@@ -6412,6 +6411,7 @@ Index: FFmpeg/libavutil/hwcontext_rkmpp.c
 +
 +    dst->width  = src->width;
 +    dst->height = src->height;
++    dst->hw_frames_ctx = NULL;
 +
 +    err = ff_hwframe_map_create(src->hw_frames_ctx, dst, src,
 +                                &rkmpp_unmap_frame, map);
