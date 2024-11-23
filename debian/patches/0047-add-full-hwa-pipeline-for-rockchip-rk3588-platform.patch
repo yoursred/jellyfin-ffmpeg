@@ -295,7 +295,7 @@ Index: FFmpeg/libavcodec/rkmppdec.c
   *
   * This file is part of FFmpeg.
   *
-@@ -19,569 +20,1017 @@
+@@ -19,569 +20,1023 @@
   * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
   */
  
@@ -1314,7 +1314,8 @@ Index: FFmpeg/libavcodec/rkmppdec.c
  
 -        // here we should have a valid frame
 -        av_log(avctx, AV_LOG_DEBUG, "Received a frame.\n");
--
++        pix_fmts[1] = rkmpp_get_av_format(mpp_fmt & MPP_FRAME_FMT_MASK);
+ 
 -        // setup general frame fields
 -        frame->format           = AV_PIX_FMT_DRM_PRIME;
 -        frame->width            = mpp_frame_get_width(mppframe);
@@ -1342,7 +1343,13 @@ Index: FFmpeg/libavcodec/rkmppdec.c
 -                ret = AVERROR(ENOMEM);
 -                goto fail;
 -            }
-+        pix_fmts[1] = rkmpp_get_av_format(mpp_fmt & MPP_FRAME_FMT_MASK);
++        if (avctx->pix_fmt == AV_PIX_FMT_DRM_PRIME)
++            avctx->sw_pix_fmt = pix_fmts[1];
++        else {
++            if ((ret = ff_get_format(avctx, pix_fmts)) < 0)
++                goto exit;
++            avctx->pix_fmt = ret;
++        }
  
 -            desc->nb_objects = 1;
 -            desc->objects[0].fd = mpp_buffer_get_fd(buffer);
@@ -1368,22 +1375,6 @@ Index: FFmpeg/libavcodec/rkmppdec.c
 -                ret = AVERROR(ENOMEM);
 -                goto fail;
 -            }
-+        if (avctx->pix_fmt == AV_PIX_FMT_DRM_PRIME)
-+            avctx->sw_pix_fmt = pix_fmts[1];
-+        else {
-+            if ((ret = ff_get_format(avctx, pix_fmts)) < 0)
-+                goto exit;
-+            avctx->pix_fmt = ret;
-+        }
- 
--            // MPP decoder needs to be closed only when all frames have been released.
--            framecontext = (RKMPPFrameContext *)framecontextref->data;
--            framecontext->decoder_ref = av_buffer_ref(rk_context->decoder_ref);
--            framecontext->frame = mppframe;
--
--            frame->data[0]  = (uint8_t *)desc;
--            frame->buf[0]   = av_buffer_create((uint8_t *)desc, sizeof(*desc), rkmpp_release_frame,
--                                               framecontextref, AV_BUFFER_FLAG_READONLY);
 +        avctx->width        = mpp_frame_get_width(mpp_frame);
 +        avctx->height       = mpp_frame_get_height(mpp_frame);
 +        avctx->coded_width  = FFALIGN(avctx->width,  64);
@@ -1410,13 +1401,27 @@ Index: FFmpeg/libavcodec/rkmppdec.c
 +            goto exit;
 +        }
  
--            if (!frame->buf[0]) {
--                ret = AVERROR(ENOMEM);
--                goto fail;
+-            // MPP decoder needs to be closed only when all frames have been released.
+-            framecontext = (RKMPPFrameContext *)framecontextref->data;
+-            framecontext->decoder_ref = av_buffer_ref(rk_context->decoder_ref);
+-            framecontext->frame = mppframe;
+-
+-            frame->data[0]  = (uint8_t *)desc;
+-            frame->buf[0]   = av_buffer_create((uint8_t *)desc, sizeof(*desc), rkmpp_release_frame,
+-                                               framecontextref, AV_BUFFER_FLAG_READONLY);
 +        if ((ret = r->mapi->control(r->mctx, MPP_DEC_SET_INFO_CHANGE_READY, NULL)) != MPP_OK) {
 +            av_log(avctx, AV_LOG_ERROR, "Failed to set info change ready: %d\n", ret);
 +            ret = AVERROR_EXTERNAL;
 +            goto exit;
++        }
+ 
+-            if (!frame->buf[0]) {
+-                ret = AVERROR(ENOMEM);
+-                goto fail;
++        /* no more new pkts after EOS, retry to get frame */
++        if (r->draining) {
++            mpp_frame_deinit(&mpp_frame);
++            return rkmpp_get_frame(avctx, frame, MPP_TIMEOUT_MAX);
 +        }
 +        goto exit;
 +    } else {
@@ -6136,7 +6141,7 @@ Index: FFmpeg/libavutil/hwcontext_rkmpp.c
 +        const int pixel_width = av_get_padded_bits_per_pixel(pixdesc) / 8;
 +        linesize = FFALIGN(linesize / pixel_width, 8) * pixel_width;
 +    } else if (is_yuv && is_fully_planar) {
-+        linesize = FFALIGN(linesize, 8);
++        linesize = FFALIGN(linesize, 16 >> (plane ? pixdesc->log2_chroma_w : 0));
 +    } else
 +        linesize = FFALIGN(linesize, 64);
 +
