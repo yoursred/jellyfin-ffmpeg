@@ -572,7 +572,27 @@ cmake \
 make -j$(nproc)
 make install
 popd
+
+# LIBPLACEBO
+pushd ${SOURCE_DIR}
+git clone -b v7.349.0 --recursive --depth=1 https://github.com/haasn/libplacebo.git
+sed -i 's|env: python_env,||g' libplacebo/src/vulkan/meson.build
+meson setup libplacebo placebo_build \
+    --prefix=${FF_DEPS_PREFIX} \
+    --cross-file=${FF_MESON_TOOLCHAIN} \
+    --buildtype=release \
+    --default-library=static \
+    -Dd3d11=enabled \
+    -Dvulkan=enabled \
+    -Dvk-proc-addr=enabled \
+    -Dvulkan-registry=${TARGET_DIR}/share/vulkan/registry/vk.xml \
+    -Dshaderc=enabled \
+    -D{demos,tests,bench,fuzz}=false
+meson configure placebo_build
+ninja -j$(nproc) -C placebo_build install
 popd
+popd
+
 
 # Jellyfin-FFmpeg
 pushd ${SOURCE_DIR}
@@ -631,7 +651,8 @@ fi
     --enable-cuda-llvm \
     --enable-cuvid \
     --enable-nvdec \
-    --enable-nvenc
+    --enable-nvenc \
+    --enable-libplacebo
 make -j$(nproc)
 make install
 popd
